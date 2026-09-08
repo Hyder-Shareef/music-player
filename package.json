@@ -1,0 +1,16 @@
+{
+  "name": "chong-music-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:web": "npm run dev --prefix apps/web",
+    "dev:api": "powershell -Command \"$env:Path = \\\"$HOME\\.local\\bin;$env:Path\\\"; uv run --project apps/api uvicorn app.main:app --reload --port 8000\"",
+    "build:web": "npm run build --prefix apps/web",
+    "test:api": "powershell -Command \"$env:Path = \\\"$HOME\\.local\\bin;$env:Path\\\"; uv run --project apps/api pytest\"",
+    "install:all": "npm install --prefix apps/web"
+  },
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ]
+}

@@ -1,0 +1,389 @@
+/* ==========================================================================
+   Apple Vision Pro — Spatial Glass Design System & Tokens
+   ========================================================================== */
+
+:root {
+  /* VisionOS Glass Materials */
+  --vision-glass-thick: rgba(45, 48, 56, 0.48);
+  --vision-glass-regular: rgba(55, 58, 66, 0.38);
+  --vision-glass-thin: rgba(65, 68, 78, 0.22);
+  --vision-glass-control: rgba(255, 255, 255, 0.14);
+  --vision-glass-control-hover: rgba(255, 255, 255, 0.24);
+  --vision-glass-control-active: rgba(255, 255, 255, 0.32);
+
+  /* Specular Lighting & Borders */
+  --vision-specular-border: 1px solid rgba(255, 255, 255, 0.22);
+  --vision-specular-border-strong: 1px solid rgba(255, 255, 255, 0.35);
+  --vision-inner-light: inset 0 1px 1px rgba(255, 255, 255, 0.55), inset 0 0 24px rgba(255, 255, 255, 0.05);
+
+  /* Spatial Shadows */
+  --vision-spatial-shadow: 0 30px 90px rgba(0, 0, 0, 0.45), 0 10px 30px rgba(0, 0, 0, 0.3);
+  --vision-pill-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  /* Typography Colors */
+  --vision-text-primary: #ffffff;
+  --vision-text-secondary: rgba(245, 245, 247, 0.75);
+  --vision-text-tertiary: rgba(245, 245, 247, 0.45);
+  --vision-accent: #fa233b;
+
+  /* Blur Depth */
+  --vision-blur-deep: blur(55px) saturate(190%);
+  --vision-blur-pill: blur(35px) saturate(180%);
+}
+
+/* Spatial Container */
+.vision-canvas-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Main Floating Glass Window */
+.vision-window {
+  width: 92vw;
+  max-width: 1320px;
+  height: 82vh;
+  max-height: 860px;
+  background: var(--vision-glass-thick);
+  backdrop-filter: var(--vision-blur-deep);
+  -webkit-backdrop-filter: var(--vision-blur-deep);
+  border-radius: 36px;
+  border: var(--vision-specular-border);
+  box-shadow: var(--vision-spatial-shadow), var(--vision-inner-light);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  z-index: 20;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+
+/* Window Content Scrollable Viewport - 120 FPS Ultra-Smooth Motion */
+.vision-window-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 32px 40px;
+  position: relative;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+@keyframes visionFadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.vision-window-content > * {
+  animation: visionFadeSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* Left Floating Navigation Rail */
+.vision-nav-rail {
+  position: fixed;
+  left: calc(50% - 660px - 72px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--vision-glass-regular);
+  backdrop-filter: var(--vision-blur-pill);
+  -webkit-backdrop-filter: var(--vision-blur-pill);
+  border-radius: 9999px;
+  border: var(--vision-specular-border);
+  box-shadow: var(--vision-pill-shadow), var(--vision-inner-light);
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 50;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 1540px) {
+  .vision-nav-rail {
+    left: 20px;
+  }
+}
+
+.vision-nav-item {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vision-text-secondary);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vision-nav-item:hover {
+  color: #ffffff;
+  background: var(--vision-glass-control);
+  transform: scale(1.08);
+}
+
+.vision-nav-item.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+/* Top VisionOS Omnibar Pill */
+.vision-top-pill {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--vision-glass-regular);
+  backdrop-filter: var(--vision-blur-pill);
+  -webkit-backdrop-filter: var(--vision-blur-pill);
+  border-radius: 9999px;
+  border: var(--vision-specular-border);
+  box-shadow: var(--vision-pill-shadow), var(--vision-inner-light);
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 50;
+  width: max-content;
+  max-width: 90vw;
+}
+
+.vision-pill-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vision-text-primary);
+  background: var(--vision-glass-control);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.vision-pill-btn:hover {
+  background: var(--vision-glass-control-hover);
+  transform: scale(1.06);
+}
+
+.vision-pill-btn.active {
+  background: rgba(255, 255, 255, 0.26);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--vision-accent);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 0 12px rgba(250, 35, 59, 0.3);
+}
+
+.vision-omnibar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(18, 20, 26, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  width: 340px;
+  max-width: 48vw;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vision-omnibar:focus-within {
+  width: 440px;
+  max-width: 55vw;
+  border-color: rgba(255, 255, 255, 0.45);
+  background: rgba(16, 18, 24, 0.78);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.vision-omnibar input {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 500;
+  outline: none;
+  width: 100%;
+}
+
+.vision-omnibar input::placeholder {
+  color: var(--vision-text-tertiary);
+}
+
+/* Bottom VisionOS Spatial Player Pill */
+.vision-player-pill {
+  position: fixed;
+  bottom: calc(50% - 430px - 58px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--vision-glass-regular);
+  backdrop-filter: var(--vision-blur-pill);
+  -webkit-backdrop-filter: var(--vision-blur-pill);
+  border-radius: 9999px;
+  border: var(--vision-specular-border);
+  box-shadow: var(--vision-pill-shadow), var(--vision-inner-light);
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 50;
+  min-width: 580px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-height: 960px) {
+  .vision-player-pill {
+    bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .vision-window {
+    width: 96vw;
+    height: 84vh;
+    border-radius: 28px;
+  }
+  .vision-nav-rail {
+    display: none;
+  }
+  .vision-player-pill {
+    min-width: 92vw;
+    bottom: 12px;
+    padding: 8px 14px;
+    gap: 10px;
+  }
+}
+
+/* Glass Card */
+.vision-card {
+  background: var(--vision-glass-thin);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.vision-card:hover {
+  background: var(--vision-glass-control);
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+}
+
+/* Glass Buttons */
+.vision-glass-btn {
+  background: var(--vision-glass-control);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  padding: 8px 18px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(20px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vision-glass-btn:hover {
+  background: var(--vision-glass-control-hover);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.03);
+}
+
+.vision-glass-btn.primary {
+  background: rgba(255, 255, 255, 0.95);
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.vision-glass-btn.primary:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.4);
+}
+
+/* VisionOS Media Card Enhancements */
+.media-card {
+  background: var(--vision-glass-thin);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.media-card:hover {
+  background: var(--vision-glass-control);
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* VisionOS Track Row Enhancements */
+.track-row {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  margin-bottom: 6px;
+  padding: 8px 16px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.track-row:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateX(4px);
+}
+
+.track-row.active {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* VisionOS Drawers & Modals */
+.drawer {
+  background: var(--vision-glass-thick) !important;
+  backdrop-filter: var(--vision-blur-deep) !important;
+  -webkit-backdrop-filter: var(--vision-blur-deep) !important;
+  border-left: var(--vision-specular-border) !important;
+  box-shadow: var(--vision-spatial-shadow) !important;
+}
+
+.modal-card {
+  background: var(--vision-glass-thick) !important;
+  backdrop-filter: var(--vision-blur-deep) !important;
+  -webkit-backdrop-filter: var(--vision-blur-deep) !important;
+  border: var(--vision-specular-border) !important;
+  border-radius: 28px !important;
+  box-shadow: var(--vision-spatial-shadow) !important;
+}
+

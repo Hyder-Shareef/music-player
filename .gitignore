@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Environment and Data
+.env
+.env.local
+apps/api/data/*.db
+apps/api/data/*.json
+!apps/api/data/.gitkeep
+.cache/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

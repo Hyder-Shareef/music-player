@@ -1,0 +1,247 @@
+/* ==========================================================================
+   React Glass UI + Luminescent + Volt UI + Awwwards Motion Design Tokens
+   ========================================================================== */
+
+:root {
+  /* Multi-Tier Glass Materials (React Glass UI) */
+  --glass-thin: rgba(255, 255, 255, 0.04);
+  --glass-regular: rgba(30, 32, 40, 0.45);
+  --glass-thick: rgba(20, 22, 28, 0.72);
+  --glass-frosted: rgba(15, 17, 23, 0.88);
+  --glass-control: rgba(255, 255, 255, 0.1);
+  --glass-control-hover: rgba(255, 255, 255, 0.18);
+  --glass-control-active: rgba(255, 255, 255, 0.28);
+
+  /* Specular Highlight Borders (Apple Vision / Glass UI) */
+  --glass-border: 1px solid rgba(255, 255, 255, 0.14);
+  --glass-border-strong: 1px solid rgba(255, 255, 255, 0.28);
+  --glass-inner-light: inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 0 20px rgba(255, 255, 255, 0.03);
+  --glass-inner-glow: inset 0 0 12px rgba(250, 35, 59, 0.2);
+
+  /* Blur Tiers */
+  --blur-subtle: blur(16px) saturate(160%);
+  --blur-regular: blur(32px) saturate(180%);
+  --blur-deep: blur(55px) saturate(200%);
+
+  /* Luminescent & Volt Neon Accents */
+  --luminescent-red: #fa233b;
+  --luminescent-cyan: #38bdf8;
+  --luminescent-purple: #c084fc;
+  --luminescent-amber: #f59e0b;
+  --luminescent-emerald: #10b981;
+
+  /* Shadows */
+  --shadow-spatial-lg: 0 24px 64px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-neon-accent: 0 0 20px rgba(250, 35, 59, 0.35);
+  --shadow-neon-cyan: 0 0 20px rgba(56, 189, 248, 0.35);
+
+  /* Motion Curves (Awwwards Grade) */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1);
+  --duration-fast: 0.2s;
+  --duration-normal: 0.35s;
+  --duration-slow: 0.6s;
+}
+
+/* Glass Panels & Cards */
+.glass-panel {
+  background: var(--glass-regular);
+  backdrop-filter: var(--blur-regular);
+  -webkit-backdrop-filter: var(--blur-regular);
+  border: var(--glass-border);
+  box-shadow: var(--shadow-spatial-lg), var(--glass-inner-light);
+  border-radius: 20px;
+}
+
+.glass-panel-deep {
+  background: var(--glass-thick);
+  backdrop-filter: var(--blur-deep);
+  -webkit-backdrop-filter: var(--blur-deep);
+  border: var(--glass-border);
+  box-shadow: var(--shadow-spatial-lg), var(--glass-inner-light);
+  border-radius: 24px;
+}
+
+.glass-pill {
+  background: var(--glass-regular);
+  backdrop-filter: var(--blur-subtle);
+  -webkit-backdrop-filter: var(--blur-subtle);
+  border: var(--glass-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), var(--glass-inner-light);
+  border-radius: 9999px;
+  transition: all var(--duration-fast) var(--ease-spring);
+}
+
+.glass-pill:hover {
+  background: var(--glass-control-hover);
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+/* 3D Perspective Tilt Card System (Awwwards Motion) */
+.tilt-card-wrapper {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.tilt-card-inner {
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tilt-card-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.22) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 5;
+}
+
+.tilt-card-wrapper:hover .tilt-card-shine {
+  opacity: 1;
+}
+
+/* Magnetic Button Physics (Awwwards Motion) */
+.magnetic-button {
+  transition: transform 0.2s var(--ease-spring), background-color 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform;
+}
+
+.magnetic-button:hover {
+  transform: scale(1.06);
+}
+
+.magnetic-button:active {
+  transform: scale(0.96);
+}
+
+/* Volt UI Live Equalizer Micro-Bars for Actively Playing Track */
+.volt-equalizer-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 14px;
+  width: 14px;
+}
+
+.volt-equalizer-bars span {
+  width: 2.5px;
+  background-color: var(--vision-accent);
+  border-radius: 1px;
+  animation: voltEqualizerDance 0.8s ease-in-out infinite alternate;
+}
+
+.volt-equalizer-bars span:nth-child(1) {
+  height: 40%;
+  animation-delay: 0.1s;
+}
+
+.volt-equalizer-bars span:nth-child(2) {
+  height: 100%;
+  animation-delay: 0.35s;
+}
+
+.volt-equalizer-bars span:nth-child(3) {
+  height: 70%;
+  animation-delay: 0.2s;
+}
+
+.volt-equalizer-bars span:nth-child(4) {
+  height: 90%;
+  animation-delay: 0.45s;
+}
+
+@keyframes voltEqualizerDance {
+  0% {
+    height: 25%;
+  }
+  50% {
+    height: 100%;
+  }
+  100% {
+    height: 40%;
+  }
+}
+
+/* Staggered Content Animation (Aether / Awwwards) */
+@keyframes aetherFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.motion-stagger-container > * {
+  animation: aetherFadeUp 0.4s var(--ease-spring) backwards;
+}
+
+.motion-stagger-container > *:nth-child(1) { animation-delay: 0.04s; }
+.motion-stagger-container > *:nth-child(2) { animation-delay: 0.08s; }
+.motion-stagger-container > *:nth-child(3) { animation-delay: 0.12s; }
+.motion-stagger-container > *:nth-child(4) { animation-delay: 0.16s; }
+.motion-stagger-container > *:nth-child(5) { animation-delay: 0.20s; }
+.motion-stagger-container > *:nth-child(6) { animation-delay: 0.24s; }
+
+/* Luminescent Dynamic Glow Aura */
+.luminescent-aura {
+  position: relative;
+}
+
+.luminescent-aura::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 50%, var(--vision-accent) 0%, transparent 70%);
+  opacity: 0;
+  filter: blur(12px);
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.luminescent-aura:hover::after {
+  opacity: 0.45;
+}
+
+/* Glowing Range Slider Track */
+input[type='range'].glass-slider {
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  height: 4px;
+  outline: none;
+  cursor: pointer;
+  transition: height 0.2s ease;
+}
+
+input[type='range'].glass-slider:hover {
+  height: 6px;
+}
+
+input[type='range'].glass-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 2px 6px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+input[type='range'].glass-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.3);
+}
