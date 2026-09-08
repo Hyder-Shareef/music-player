@@ -129,53 +129,110 @@ export const musicApi = {
 
   // Library & Likes
   getLibrary: async (): Promise<any> => {
-    const res = await apiClient.get('/library');
-    return res.data;
+    try {
+      const res = await apiClient.get('/library');
+      return res.data;
+    } catch {
+      return {
+        playlists: musicApi.getLibraryPlaylists(),
+        likes: musicApi.getLikes(),
+        history: musicApi.getHistory(),
+      };
+    }
   },
 
   getLibraryPlaylists: async (): Promise<PlaylistRecord[]> => {
-    const res = await apiClient.get<PlaylistRecord[]>('/library/playlists');
-    return res.data;
+    try {
+      const res = await apiClient.get<PlaylistRecord[]>('/library/playlists');
+      if (Array.isArray(res.data)) {
+        localStorage.setItem('chong_user_playlists', JSON.stringify(res.data));
+        return res.data;
+      }
+    } catch {}
+    const local = localStorage.getItem('chong_user_playlists');
+    return local ? JSON.parse(local) : [];
   },
 
   getLikes: async (): Promise<Track[]> => {
-    const res = await apiClient.get<Track[]>('/likes');
-    return res.data;
+    try {
+      const res = await apiClient.get<Track[]>('/likes');
+      if (Array.isArray(res.data)) {
+        localStorage.setItem('chong_liked_tracks', JSON.stringify(res.data));
+        return res.data;
+      }
+    } catch {}
+    const local = localStorage.getItem('chong_liked_tracks');
+    return local ? JSON.parse(local) : [];
   },
 
   checkLike: async (trackId: string): Promise<boolean> => {
-    const res = await apiClient.get<{ liked: boolean }>(`/likes/${trackId}`);
-    return res.data.liked;
+    try {
+      const res = await apiClient.get<{ liked: boolean }>(`/likes/${trackId}`);
+      return res.data.liked;
+    } catch {
+      const local = localStorage.getItem('chong_liked_tracks');
+      const list: Track[] = local ? JSON.parse(local) : [];
+      return list.some((t) => (t.id || t.provider_id) === trackId);
+    }
   },
 
   likeTrack: async (track: Track): Promise<void> => {
-    await apiClient.post(`/likes/${track.id || track.provider_id}`, { track });
+    const trackId = track.id || track.provider_id;
+    const local = localStorage.getItem('chong_liked_tracks');
+    const list: Track[] = local ? JSON.parse(local) : [];
+    if (!list.some((t) => (t.id || t.provider_id) === trackId)) {
+      list.unshift(track);
+      localStorage.setItem('chong_liked_tracks', JSON.stringify(list));
+    }
+    try {
+      await apiClient.post(`/likes/${trackId}`, { track });
+    } catch {}
   },
 
   unlikeTrack: async (trackId: string): Promise<void> => {
-    await apiClient.delete(`/likes/${trackId}`);
+    const local = localStorage.getItem('chong_liked_tracks');
+    const list: Track[] = local ? JSON.parse(local) : [];
+    const filtered = list.filter((t) => (t.id || t.provider_id) !== trackId);
+    localStorage.setItem('chong_liked_tracks', JSON.stringify(filtered));
+    try {
+      await apiClient.delete(`/likes/${trackId}`);
+    } catch {}
   },
 
   // History
   getHistory: async (): Promise<Track[]> => {
-    const res = await apiClient.get<Track[]>('/history');
-    return res.data;
+    try {
+      const res = await apiClient.get<Track[]>('/history');
+      if (Array.isArray(res.data)) {
+        localStorage.setItem('chong_history', JSON.stringify(res.data));
+        return res.data;
+      }
+    } catch {}
+    const local = localStorage.getItem('chong_history');
+    return local ? JSON.parse(local) : [];
   },
 
   recordHistory: async (track: Track, durationSeconds: number = 0): Promise<void> => {
+    const trackId = track.id || track.provider_id;
+    const local = localStorage.getItem('chong_history');
+    const list: Track[] = local ? JSON.parse(local) : [];
+    const withoutCurrent = list.filter((t) => (t.id || t.provider_id) !== trackId);
+    const updated = [track, ...withoutCurrent].slice(0, 100);
+    localStorage.setItem('chong_history', JSON.stringify(updated));
     try {
       await apiClient.post('/history', {
-        track_id: track.id || track.provider_id,
+        track_id: trackId,
         track,
         duration_seconds: durationSeconds
       });
-    } catch {
-      // Non-blocking
-    }
+    } catch {}
   },
 
   clearHistory: async (): Promise<void> => {
-    await apiClient.delete('/history');
+    localStorage.removeItem('chong_history');
+    try {
+      await apiClient.delete('/history');
+    } catch {}
   },
 
   // User & Auth

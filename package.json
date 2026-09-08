@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "build": "npm run build --prefix apps/web",
+    "dev": "npm run dev --prefix apps/web",
     "dev:web": "npm run dev --prefix apps/web",
     "dev:api": "powershell -Command \"$env:Path = \\\"$HOME\\.local\\bin;$env:Path\\\"; uv run --project apps/api uvicorn app.main:app --reload --port 8000\"",
     "build:web": "npm run build --prefix apps/web",
