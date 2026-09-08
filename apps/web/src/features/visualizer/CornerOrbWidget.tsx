@@ -28,26 +28,34 @@ export const CornerOrbWidget: React.FC = () => {
     const container = containerRef.current;
     if (!container) return;
 
-    const width = 56;
-    const height = 56;
+    let renderer: THREE.WebGLRenderer | null = null;
+    let geometry: THREE.BufferGeometry | null = null;
+    let material: THREE.PointsMaterial | null = null;
+    let texture: THREE.CanvasTexture | null = null;
+    let animationFrameId: number = 0;
+    let handleMouseMove: ((e: MouseEvent) => void) | null = null;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
-    camera.position.z = 48;
+    try {
+      const width = 56;
+      const height = 56;
 
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      powerPreference: 'high-performance',
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+      camera.position.z = 48;
+
+      renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance',
+      });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
 
     // Particle Sphere Geometry
     const particleCount = 1200;
     const sphereRadius = 16;
-    const geometry = new THREE.BufferGeometry();
+    geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const originalPositions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
@@ -93,9 +101,9 @@ export const CornerOrbWidget: React.FC = () => {
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 16, 16);
     }
-    const texture = new THREE.CanvasTexture(canvas);
+    texture = new THREE.CanvasTexture(canvas);
 
-    const material = new THREE.PointsMaterial({
+    material = new THREE.PointsMaterial({
       size: 1.6,
       map: texture,
       vertexColors: true,
@@ -111,7 +119,7 @@ export const CornerOrbWidget: React.FC = () => {
     // Mouse parallax for the orb
     let mouseX = 0;
     let mouseY = 0;
-    const handleMouseMove = (e: MouseEvent) => {
+    handleMouseMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
       const x = e.clientX - (rect.left + rect.width / 2);
       const y = e.clientY - (rect.top + rect.height / 2);
@@ -126,11 +134,11 @@ export const CornerOrbWidget: React.FC = () => {
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    let animationFrameId: number;
     let time = 0;
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+      if (!geometry) return;
 
       audioAnalyzer.update(isPlaying);
       const bass = audioAnalyzer.bass;
@@ -181,21 +189,28 @@ export const CornerOrbWidget: React.FC = () => {
       }
       posAttr.needsUpdate = true;
 
-      renderer.render(scene, camera);
+      if (renderer) {
+        renderer.render(scene, camera);
+      }
     };
 
     animate();
+    } catch (err) {
+      console.warn('WebGL 3D Orb visualizer initialization warning:', err);
+    }
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener('mousemove', handleMouseMove);
-      if (renderer.domElement && container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
-      }
-      geometry.dispose();
-      material.dispose();
-      texture.dispose();
-      renderer.dispose();
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      if (handleMouseMove) window.removeEventListener('mousemove', handleMouseMove);
+      try {
+        if (renderer && renderer.domElement && container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement);
+        }
+        if (geometry) geometry.dispose();
+        if (material) material.dispose();
+        if (texture) texture.dispose();
+        if (renderer) renderer.dispose();
+      } catch {}
     };
   }, [isPlaying]);
 

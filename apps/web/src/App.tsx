@@ -9,6 +9,7 @@ import { ArtistPage } from './pages/ArtistPage';
 import { AlbumPage } from './pages/AlbumPage';
 import { PlaylistPage } from './pages/PlaylistPage';
 import { LibraryPage } from './pages/LibraryPage';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,8 +23,9 @@ const queryClient = new QueryClient({
 
 export const App: React.FC = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
         <Routes>
           <Route element={<AppShell />}>
             <Route path="/" element={<HomePage />} />
@@ -42,5 +44,6 @@ export const App: React.FC = () => {
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
+  </ErrorBoundary>
   );
 };

@@ -97,15 +97,96 @@ export const HomePage: React.FC = () => {
     },
   });
 
+  const safeShelves = Array.isArray(shelves) ? shelves : [];
+  const safeHistory = Array.isArray(playHistory) ? playHistory : [];
+
+  // Fallback curated recommendation items if live shelf not loaded yet
+  const DEFAULT_RECOMMENDATIONS = [
+    {
+      type: 'track' as const,
+      data: {
+        id: '4NRXx6U8ABQ',
+        provider_id: '4NRXx6U8ABQ',
+        title: 'Starboy',
+        artists: [{ id: 'UC0WP5P-ufpRfjbNrmOWwLBQ', name: 'The Weeknd' }, { id: 'UCRr1xG_2WIDs18a6cIiCxeA', name: 'Daft Punk' }],
+        album: { id: 'starboy', title: 'Starboy' },
+        artwork: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=600&auto=format&fit=crop',
+        duration: '3:50',
+      } as Track,
+    },
+    {
+      type: 'track' as const,
+      data: {
+        id: '9mahKFNuHqM',
+        provider_id: '9mahKFNuHqM',
+        title: 'Goosebumps',
+        artists: [{ id: 'UCbGXBFWlbl2la_Ldhg2snsQ', name: 'Travis Scott' }, { id: 'kendrick', name: 'Kendrick Lamar' }],
+        album: { id: 'birds', title: 'Birds in the Trap Sing McKnight' },
+        artwork: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop',
+        duration: '4:04',
+      } as Track,
+    },
+    {
+      type: 'track' as const,
+      data: {
+        id: '6habFhsOp2k',
+        provider_id: '6habFhsOp2k',
+        title: 'SICKO MODE',
+        artists: [{ id: 'UCbGXBFWlbl2la_Ldhg2snsQ', name: 'Travis Scott' }, { id: 'UGtN6oP41L9_q7W1_91pEyw', name: 'Drake' }],
+        album: { id: 'astroworld', title: 'ASTROWORLD' },
+        artwork: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=600&auto=format&fit=crop',
+        duration: '5:12',
+      } as Track,
+    },
+    {
+      type: 'track' as const,
+      data: {
+        id: 'fJ9rUzIMcZQ',
+        provider_id: 'fJ9rUzIMcZQ',
+        title: 'Bohemian Rhapsody',
+        artists: [{ id: 'queen', name: 'Queen' }],
+        album: { id: 'night-opera', title: 'A Night at the Opera' },
+        artwork: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=600&auto=format&fit=crop',
+        duration: '5:55',
+      } as Track,
+    },
+    {
+      type: 'track' as const,
+      data: {
+        id: '450p7goxZqg',
+        provider_id: '450p7goxZqg',
+        title: 'All of the Lights',
+        artists: [{ id: 'kanye', name: 'Kanye West' }, { id: 'rihanna', name: 'Rihanna' }],
+        album: { id: 'mbdtf', title: 'My Beautiful Dark Twisted Fantasy' },
+        artwork: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=600&auto=format&fit=crop',
+        duration: '4:59',
+      } as Track,
+    },
+    {
+      type: 'track' as const,
+      data: {
+        id: '1G4isv_Fylg',
+        provider_id: '1G4isv_Fylg',
+        title: 'Paradise',
+        artists: [{ id: 'coldplay', name: 'Coldplay' }],
+        album: { id: 'mylo-xyloto', title: 'Mylo Xyloto' },
+        artwork: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=600&auto=format&fit=crop',
+        duration: '4:38',
+      } as Track,
+    },
+  ];
+
   // Flatten top recommendations from shelves or fallback
-  const firstShelf = shelves[0];
-  const recommendationItems = firstShelf?.contents.slice(0, 6) || [];
+  const firstShelf = safeShelves.length > 0 && Array.isArray(safeShelves[0]?.contents) ? safeShelves[0] : null;
+  const recommendationItems = (firstShelf && firstShelf.contents.length > 0)
+    ? firstShelf.contents.slice(0, 6)
+    : DEFAULT_RECOMMENDATIONS;
 
   // Continue playing tracks (from history or first shelf)
-  const continuePlayingTracks: Track[] = playHistory.length > 0
-    ? playHistory.slice(0, 2)
+  const continuePlayingTracks: Track[] = safeHistory.length > 0
+    ? safeHistory.slice(0, 2)
     : (recommendationItems
-        .filter((item) => item.type === 'track')
+        .filter((item) => item?.type === 'track' && item?.data)
         .slice(0, 2)
         .map((item) => item.data as Track) as Track[]);
 
@@ -114,16 +195,16 @@ export const HomePage: React.FC = () => {
     ? continuePlayingTracks
     : [
         {
-          id: 'she-will-be-loved',
-          provider_id: 'she-will-be-loved',
-          title: 'She Will Be Loved',
-          artists: [{ id: 'maroon-5', name: 'Maroon 5' }],
-          artwork: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=300&auto=format&fit=crop',
-          duration: 257,
+          id: '4NRXx6U8ABQ',
+          provider_id: '4NRXx6U8ABQ',
+          title: 'Starboy',
+          artists: [{ id: 'the-weeknd', name: 'The Weeknd' }],
+          artwork: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=300&auto=format&fit=crop',
+          duration: '3:50',
         } as unknown as Track,
       ];
 
-  if (isLoading) {
+  if (isLoading && safeShelves.length === 0) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -545,8 +626,8 @@ export const HomePage: React.FC = () => {
       {/* =========================================================================
           SECTION 3: REMAINING CURATED SHELVES (Trending, Quick Picks, etc.)
           ========================================================================= */}
-      {shelves.slice(1).map((shelf, sIdx) => {
-        if (!shelf.contents || shelf.contents.length === 0) return null;
+      {safeShelves.slice(1).map((shelf, sIdx) => {
+        if (!shelf || !Array.isArray(shelf.contents) || shelf.contents.length === 0) return null;
 
         return (
           <section key={sIdx}>
@@ -559,7 +640,7 @@ export const HomePage: React.FC = () => {
                   fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
                 }}
               >
-                {shelf.title}
+                {shelf.title || 'Featured'}
               </h2>
             </div>
 
@@ -571,8 +652,9 @@ export const HomePage: React.FC = () => {
               }}
             >
               {shelf.contents.slice(0, 6).map((item, idx) => {
+                if (!item || !item.data) return null;
                 const data = item.data;
-                const title = data.title || data.name;
+                const title = data.title || data.name || 'Featured Music';
                 const subtitle = data.artists?.map((a: any) => a.name).join(', ') || data.author || '';
 
                 return (
